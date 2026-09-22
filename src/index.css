@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #7c3aed;
+  --color-primary-light: #a78bfa;
+  --color-primary-dark: #5b21b6;
+  --color-primary-bg: #f3f0ff;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-text-heading: #1e293b;
+  --color-text-body: #475569;
+  --color-text-muted: #94a3b8;
+  --color-danger: #ef4444;
+  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-surface-alt);
+    color: var(--color-text-body);
+    font-family: var(--font-family-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+/* ── Leaflet overrides ── */
+.leaflet-container {
+  font-family: var(--font-family-sans);
+  z-index: 0;
+}
+
+/* Pastikan popup Leaflet tampil di atas elemen lain */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.leaflet-popup-content {
+  margin: 10px 14px;
+}
+
+/* Fix z-index peta agar tidak overlap header/modal */
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 400;
+}
