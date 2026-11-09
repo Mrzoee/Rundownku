@@ -2,13 +2,29 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import type { SupabaseConfig, TimelineEvent, Trip } from '../types'
 
 const STORAGE_KEY = 'rundownku_supabase_config'
+const DEFAULT_SUPABASE_URL = 'https://dwidlwhqrlrcqjrhqxue.supabase.co'
+const DEFAULT_SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR3aWRsd2hxcmxyY3FqcmhxeHVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxODUwMTQsImV4cCI6MjEwOTc2MTAxNH0.EpWuu9gRvWSyNel90vIFlpl3aNpNpm6U8G2PKlBtraU'
 
 let cachedClient: SupabaseClient | null = null
 let cachedConfigKey = ''
 
 export function getSupabaseConfig(): SupabaseConfig | null {
-  const envUrl = import.meta.env.VITE_SUPABASE_URL?.trim()
-  const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim()
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as SupabaseConfig
+      if (parsed.url?.trim() && parsed.anonKey?.trim()) {
+        return { url: parsed.url.trim(), anonKey: parsed.anonKey.trim() }
+      }
+    }
+  } catch {
+    // ignore storage errors
+  }
+
+  const envUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || DEFAULT_SUPABASE_URL
+  const envKey =
+    import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || DEFAULT_SUPABASE_ANON_KEY
 
   if (
     envUrl &&
@@ -19,16 +35,6 @@ export function getSupabaseConfig(): SupabaseConfig | null {
     return { url: envUrl, anonKey: envKey }
   }
 
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as SupabaseConfig
-    if (parsed.url?.trim() && parsed.anonKey?.trim()) {
-      return { url: parsed.url.trim(), anonKey: parsed.anonKey.trim() }
-    }
-  } catch {
-    // ignore storage errors
-  }
   return null
 }
 
